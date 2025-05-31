@@ -175,6 +175,53 @@ npm run docker:down && npm run docker:up
 - 🍃 MongoDB: Change port 27017
 - 🖥️ Mongo Express: Change port 8081
 
+## 🔄 Staying Updated
+
+### 📦 Check for Updates
+```bash
+# See available updates
+npm outdated
+
+# Check specific Payload packages
+npm outdated payload @payloadcms/next @payloadcms/db-mongodb
+```
+
+### 🚀 Update Payload
+```bash
+# Update all Payload packages
+npm update payload @payloadcms/next @payloadcms/db-mongodb @payloadcms/richtext-lexical
+
+# Update to latest stable
+npm install payload@latest
+
+# After updates, always regenerate types!
+npm run generate:types
+npm run docker:up:build
+```
+
+### 🔔 Stay Informed
+- ⭐ [Star Payload on GitHub](https://github.com/payloadcms/payload) for release notifications
+- 📖 Follow the [Payload Blog](https://payloadcms.com/blog) for major updates
+- 💬 Join [Discord Community](https://discord.com/invite/payload) for discussions
+- 🐦 Follow [@payloadcms](https://twitter.com/payloadcms) on Twitter
+
+### ⚠️ Update Best Practices
+```bash
+# 1. Create update branch
+git checkout -b update-payload
+
+# 2. Update and test
+npm update payload
+npm run docker:up:build
+
+# 3. Test admin panel & API endpoints
+
+# 4. If all good, merge
+git checkout main && git merge update-payload
+```
+
+> 💡 **Pro Tip**: Always read release notes for breaking changes before major updates!
+
 ## 🤝 Contributing
 
 1. 🍴 Fork the repo

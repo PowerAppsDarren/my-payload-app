@@ -9,6 +9,18 @@ TypeError: Cannot destructure property 'config' of '(0 , _payloadcms_ui__WEBPACK
     at CreateFirstUserClient (webpack-internal:///(app-pages-browser)/./node_modules/@payloadcms/next/dist/views/CreateFirstUser/index.client.js:19:21)
 ```
 
+## Speculation on why it's happening
+
+The issue seems to stem from the `useConfig()` hook returning undefined in the `CreateFirstUserClient` component. This indicates that the Payload configuration context is not being properly initialized or provided to the client-side components when using Next.js App Router.
+This is likely due to the way the configuration is being imported and used in the Next.js App Router setup, which differs from the traditional pages-based routing.
+
+1. Server loads Payload config (has database access)
+2. Server renders HTML with that config
+3. Browser receives HTML (looks perfect!)
+4. Browser tries to run JavaScript
+5. useConfig() hook can't access server's config
+6. Boom! - "Cannot read property 'config' of undefined"
+
 ## Environment
 - **Payload CMS Version**: 3.40.0
 - **Next.js Version**: 15.3.3
@@ -194,3 +206,12 @@ This appears to be a Next.js App Router specific issue with client-side configur
 
 ## Request
 Please provide guidance on the correct way to set up Payload 3.x with Next.js App Router so that client-side components can access the configuration context properly.
+
+## Speculation on Why it Fails
+
+1. Server loads Payload config (has database access)
+2. Server renders HTML with that config
+3. Browser receives HTML (looks perfect!)
+4. Browser tries to run JavaScript
+5. useConfig() hook can't access server's config
+6. Boom! - "Cannot read property 'config' of undefined"
