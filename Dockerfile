@@ -1,23 +1,28 @@
-FROM node:18-alpine
+FROM node:18-alpine AS base
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+# If you use yarn, uncomment the next line and comment out the npm install line
+# COPY yarn.lock ./
 
-# Copy source code
+# Install app dependencies
+# If you use yarn, use: RUN yarn install --frozen-lockfile
+RUN npm install
+
+# Copy the rest of your app's source code
 COPY . .
 
-# Generate Payload types
-RUN npm run generate:types
-
-# Build the application
+# Build your Payload app
+# If your build script is different, change it accordingly
 RUN npm run build
 
-# Expose the port the app runs on
+# Expose the port your app runs on
 EXPOSE 3000
 
-# Define the command to run the application
-CMD ["npm", "start"]
+# Define the command to run your app
+CMD ["npm", "run", "serve"]
+# If you use yarn, use: CMD ["yarn", "serve"]
+# Or if your start script is different (e.g. `npm start`), change it.

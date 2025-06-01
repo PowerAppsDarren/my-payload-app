@@ -1,50 +1,34 @@
 version: '3.8'
 
 services:
-  app:
+  payload:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
-    env_file:
-      - .env
+      MONGODB_URI: mongodb://mongo:27017/payload-db # Connects to the mongo service
+      PAYLOAD_SECRET: 'your-payload-secret' # Change this to a strong, random secret
+      NODE_ENV: development # Or 'production'
+      # Add any other environment variables your app needs
+      # PAYLOAD_CONFIG_PATH: src/payload.config.ts # If your config is not at the default location
     depends_on:
-      - mongodb
+      - mongo
     volumes:
-      - .:/app
-      - /app/node_modules
-    networks:
-      - payload-network
+      - .:/app # Mounts your current directory to /app in the container for development
+      - /app/node_modules # Excludes node_modules from being overwritten by the volume mount
+      - /app/dist # Or /app/build, depending on your build output directory
+      - /app/.payload # Persist .payload folder if needed
 
-  mongodb:
-    image: mongo:7
-    restart: unless-stopped
+  mongo:
+    image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
-    networks:
-      - payload-network
-
-  mongo-express:
-    image: mongo-express:1.0.2
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
+      - mongo_data:/data/db
     environment:
-      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
-      ME_CONFIG_BASICAUTH: false
-    depends_on:
-      - mongodb
-    networks:
-      - payload-network
-
-networks:
-  payload-network:
-    driver: bridge
+      MONGO_INITDB_DATABASE: payload-db
 
 volumes:
-  mongodb_data:
+  mongo_data:
